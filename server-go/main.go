@@ -1,44 +1,21 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
-	"log"
+	"cristianvega6150/server/controllers/data"
+	"cristianvega6150/server/core"
 	"net/http"
 )
 
-type Message struct {
-	Text string `json:"message"`
-	Post string `json: "method"`
-}
-
-type Informacion struct {
-	Name string `json:"name"`
-	Job  string `json:"job"`
-}
-
-func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Hi there")
-
-	w.Header().Set("Content-Type", "application/json")
-
-	hello := Message{Text: "Hello world", Post: r.Method}
-	messagge, _ := json.Marshal(hello)
-
-	fmt.Println(r.Method, http.MethodPost)
-	if r.Method == http.MethodPost {
-		var bodydata Informacion
-		err := json.NewDecoder(r.Body).Decode(&bodydata)
-		fmt.Println(bodydata.Name, bodydata.Job)
-		if err != nil {
-		}
-
-	}
-	json_string := string(messagge)
-	w.Write([]byte(json_string))
-}
-
 func main() {
-	http.HandleFunc("/", handler)
-	log.Fatal(http.ListenAndServe(":3000", nil))
+	server_core := core.Server{
+		Config: core.ConfigServerMux{
+			Address: ":3000",
+		},
+		Handler: map[string]func(http.ResponseWriter, *http.Request){
+			"GET /data":  data.DataController,
+			"POST /data": data.DataPostController,
+		},
+	}
+
+	server_core.Start()
 }
