@@ -1,7 +1,10 @@
 package core
 
 import (
+	"fmt"
 	"net/http"
+
+	"github.com/rs/cors"
 )
 
 type RouterStruct struct {
@@ -22,16 +25,21 @@ type Server struct {
 
 // Emepzará con el servidor una vez se llamé
 func (server *Server) Start() {
+	c := cors.New(cors.Options{
+		AllowedOrigins: []string{"*"},
+	})
 	routes := http.NewServeMux()
 
 	for path, handler := range server.Handler {
 		routes.HandleFunc(path, handler)
 	}
 
+	// handler := cors.Default().Handler(routes)
 	http_server := &http.Server{
 		Addr:    server.Config.Address,
-		Handler: routes,
+		Handler: c.Handler(routes),
 	}
 
 	http_server.ListenAndServe()
+	fmt.Println("liston to")
 }
