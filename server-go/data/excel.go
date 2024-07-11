@@ -1,10 +1,14 @@
 package data
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"os"
 	"path/filepath"
+	"strconv"
+	"strings"
 
 	"github.com/xuri/excelize/v2"
 )
@@ -31,9 +35,9 @@ type LocationCustomer struct {
 Está función es para poder sacar información dentro del excel, con estos datos luego
 */
 
-func GetData(index_data int) {
+func GetData(index_data int) (data_json []byte) {
 
-	// var data []Cliente
+	var data []Cliente
 	currentDir, errPath := os.Getwd()
 	file, err := excelize.OpenFile(filepath.Join(currentDir, "\\data\\clientes.xlsx"))
 
@@ -60,9 +64,37 @@ func GetData(index_data int) {
 		if index == 0 {
 			continue
 		} else if index == index_data {
-			return
+			break
 		}
-		var client Cliente = Cliente{}
-		fmt.Println(row)
+
+		sector_codePosta := strings.Split(row[4], ",")
+		intphone, _ := strconv.Atoi(row[5])
+		client := Cliente{
+			ID:        row[0],
+			FullName:  row[1],
+			BirthDate: row[2],
+			LocationCustomer: LocationCustomer{
+				CustomerAddress:    row[3],
+				CustomerSector:     sector_codePosta[0],
+				CustomerPostalCode: sector_codePosta[1],
+			},
+			Phone:         intphone,
+			Email:         row[6],
+			DischargeDate: row[7],
+			CustomerGroup: row[8],
+		}
+
+		new_data := append(data, client)
+		data = new_data
 	}
+	fmt.Println(data)
+	fmt.Println("Datos:")
+	json, err := json.Marshal(data)
+
+	if err != nil {
+		errors.New("Not translate JSON")
+	}
+
+	return json
+
 }

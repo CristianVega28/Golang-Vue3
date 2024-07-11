@@ -1,33 +1,45 @@
 <script setup lang="ts">
-import { ref, reactive } from "vue";
+import { reactive } from "vue";
 
-interface Fomrdata {
-  name: string
-  job: string
-} 
-
-const form_data = reactive<Fomrdata>({
-name:"",
-job: ""
-})
-
-const sentdata = () => {
-  fetch("http://localhost:3000", {
-    method: "POST",
-    body: JSON.stringify(form_data),
-    headers: {
-      "Content-Type" : "application/json"
-    }
-  })
-  console.log(JSON.stringify(form_data));
-  
+interface Formdata {
+  name: string;
+  job: string;
 }
+
+const form_data = reactive<Formdata>({
+  name: "",
+  job: "",
+});
+
+const sentdata = async () => {
+  try {
+    let data = await fetch("http://localhost:3000/data/cr");
+    let json = await data.json()
+    console.log(json);
+    
+  } catch (error) {
+    console.log(error);
+     
+  }
+  
+};
+sentdata()
 </script>
 
 <template>
-  <form @submit.enter.prevent="sentdata">
-    <input type="text" v-model="form_data.name" name="name">
-    <input type="text" v-model="form_data.job" name="job">
-    <input type="submit" value="Enviar">
-  </form>
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        One
+      </div>
+      <div class="col">
+        Onea
+      </div>
+      <div class="w-100">
+      </div>
+      <div class="col">
+        One
+      </div>
+    </div>
+  </div>
 </template>
