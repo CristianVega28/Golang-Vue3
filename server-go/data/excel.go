@@ -35,7 +35,7 @@ type LocationCustomer struct {
 Está función es para poder sacar información dentro del excel, con estos datos luego
 */
 
-func GetData(index_data int) (data_json []byte) {
+func GetDataExcel() {
 
 	var data []Cliente
 	currentDir, errPath := os.Getwd()
@@ -53,30 +53,43 @@ func GetData(index_data int) (data_json []byte) {
 
 	rows, err := file.GetRows("Hoja1")
 
+	//Parsear la columna
+
+	rowsParse := rows[1 : len(rows)-1]
 	if err != nil {
 		log.Fatal("Error al Abria la hoja del excel")
 	}
-	for index, row := range rows {
+	for index, row := range rowsParse {
 
 		/*
 			|---ID---|---FullName---|---BirthDate---|----Location----|---Phone--|---Email---|---DischargeDate---|--CustomerGroup---|
 		*/
-		if index == 0 {
-			continue
-		} else if index == index_data {
+		if index == 100 {
 			break
 		}
 
 		sector_codePosta := strings.Split(row[4], ",")
+
+		var sector string
+		var postcode string
+		if len(sector_codePosta) == 1 {
+			sector = sector_codePosta[0]
+			postcode = ""
+		} else if len(sector_codePosta) == 2 {
+			sector = sector_codePosta[0]
+			postcode = sector_codePosta[1]
+		}
+
 		intphone, _ := strconv.Atoi(row[5])
+		fmt.Println(sector_codePosta)
 		client := Cliente{
 			ID:        row[0],
 			FullName:  row[1],
 			BirthDate: row[2],
 			LocationCustomer: LocationCustomer{
 				CustomerAddress:    row[3],
-				CustomerSector:     sector_codePosta[0],
-				CustomerPostalCode: sector_codePosta[1],
+				CustomerSector:     sector,
+				CustomerPostalCode: postcode,
 			},
 			Phone:         intphone,
 			Email:         row[6],
@@ -87,14 +100,30 @@ func GetData(index_data int) (data_json []byte) {
 		new_data := append(data, client)
 		data = new_data
 	}
-	fmt.Println(data)
-	fmt.Println("Datos:")
-	json, err := json.Marshal(data)
+	json, _ := json.Marshal(data)
+	ClientsJson(json)
 
 	if err != nil {
 		errors.New("Not translate JSON")
 	}
 
-	return json
+}
+
+func ClientsJson(jsondata []byte) (any, error) {
+	currentDir, errPath := os.Getwd()
+	if errPath != nil {
+		return nil, errors.New("error a la hora de mapear el archivo data")
+	}
+
+	filename := filepath.Join(currentDir, "\\data\\clients.json")
+	if _, err := os.Stat(filename); os.IsNotExist(err) {
+		os.Create(filename)
+		os.WriteFile(filename, jsondata, 0666)
+	}
+
+	return nil, nil
+}
+
+func GetDataCLientsJson() {
 
 }

@@ -4,9 +4,8 @@ import (
 	data "cristianvega6150/server/controllers/clients"
 	"cristianvega6150/server/controllers/forms"
 	"cristianvega6150/server/core"
-	"fmt"
+	"cristianvega6150/server/database"
 	"net/http"
-	"path/filepath"
 )
 
 func main() {
@@ -19,6 +18,8 @@ func main() {
 			"POST /form":              forms.FormContrller,
 		},
 	}
-	fmt.Println(filepath.Clean("/clientes.xlsx"))
+	// excel.GetDataExcel()
+	database.Conection()
 	server_core.Start()
+
 }

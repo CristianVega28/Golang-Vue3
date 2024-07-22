@@ -1,23 +1,22 @@
 package data
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
-
-	"cristianvega6150/server/data"
 )
 
 func DataController(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/plain")
+	w.Header().Set("Content-Type", "application/json")
 
 	pathvalue, err := strconv.Atoi(r.PathValue("total_index"))
-
+	fmt.Println(pathvalue)
 	if err != nil {
-		errors.New("El indice no es un número")
+
+		http.Error(w, "Solo esta permitido los digitos", http.StatusBadRequest)
 	}
-	w.Write(data.GetData(pathvalue))
+	// w.Write(data.GetData(pathvalue))
+
 }
 
 func DataPostController(w http.ResponseWriter, r *http.Request) {
