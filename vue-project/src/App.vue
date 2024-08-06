@@ -18,9 +18,15 @@ const form_data = reactive<Formdata>({
 
 const sentdata = async () => {
   try {
-    let data = await fetch("http://localhost:3000/data/40");
+    let data = await fetch("http://localhost:3000/data/ff");
     let json = await data.json()
-    console.log(json);
+    if (data.status === 200) {
+      console.log(json);
+      
+    } else {
+      throw new Error(json.error);
+      
+    }
     
   } catch (error) {
     console.log(error);

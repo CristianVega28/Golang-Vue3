@@ -4,7 +4,7 @@ import (
 	data "cristianvega6150/server/controllers/clients"
 	"cristianvega6150/server/controllers/forms"
 	"cristianvega6150/server/core"
-	"cristianvega6150/server/database"
+	excel "cristianvega6150/server/data"
 	"net/http"
 )
 
@@ -18,8 +18,8 @@ func main() {
 			"POST /form":              forms.FormContrller,
 		},
 	}
-	// excel.GetDataExcel()
-	database.Conection()
+	excel.GetDataExcel()
+	excel.GetDataJsonClients()
 	server_core.Start()
 
 }

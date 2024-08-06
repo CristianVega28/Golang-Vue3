@@ -11,7 +11,10 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func Conection() {
+type ServiceDB struct {
+}
+
+func (*ServiceDB) Conection() (*sql.DB, error) {
 	err := godotenv.Load()
 	if err != nil {
 		fmt.Errorf("Error en las variables de entorno")
@@ -26,12 +29,16 @@ func Conection() {
 		AllowNativePasswords: true,
 	}
 
-	db, _ := sql.Open("mysql", config.FormatDSN())
+	db, err := sql.Open("mysql", config.FormatDSN())
 
 	pingError := db.Ping()
 	if pingError != nil {
 		log.Fatal(pingError.Error())
 	}
 
-	fmt.Println("connected")
+	if err != nil {
+		return nil, err
+	}
+
+	return db, nil
 }

@@ -2,7 +2,6 @@ package data
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -39,10 +38,17 @@ func GetDataExcel() {
 
 	var data []Cliente
 	currentDir, errPath := os.Getwd()
-	file, err := excelize.OpenFile(filepath.Join(currentDir, "\\data\\clientes.xlsx"))
+	file, errFileExcel := excelize.OpenFile(filepath.Join(currentDir, "\\data\\clientes.xlsx"))
+	filename := filepath.Join(currentDir, "\\data\\clients.json")
+	if _, err := os.Stat(filename); !os.IsNotExist(err) {
+		return
+	}
 
-	if err != nil || errPath != nil {
-		fmt.Println("error en las rutas")
+	if errFileExcel != nil {
+		log.Fatal("Error al Abria la hoja del excel")
+	}
+	if errPath != nil {
+		log.Fatal("error en las rutas")
 	}
 
 	defer func() {
@@ -51,22 +57,16 @@ func GetDataExcel() {
 		}
 	}()
 
-	rows, err := file.GetRows("Hoja1")
+	rows, _ := file.GetRows("Hoja1")
 
 	//Parsear la columna
 
 	rowsParse := rows[1 : len(rows)-1]
-	if err != nil {
-		log.Fatal("Error al Abria la hoja del excel")
-	}
-	for index, row := range rowsParse {
+	for _, row := range rowsParse {
 
 		/*
 			|---ID---|---FullName---|---BirthDate---|----Location----|---Phone--|---Email---|---DischargeDate---|--CustomerGroup---|
 		*/
-		if index == 100 {
-			break
-		}
 
 		sector_codePosta := strings.Split(row[4], ",")
 
@@ -81,7 +81,6 @@ func GetDataExcel() {
 		}
 
 		intphone, _ := strconv.Atoi(row[5])
-		fmt.Println(sector_codePosta)
 		client := Cliente{
 			ID:        row[0],
 			FullName:  row[1],
@@ -100,19 +99,19 @@ func GetDataExcel() {
 		new_data := append(data, client)
 		data = new_data
 	}
-	json, _ := json.Marshal(data)
+	json, errJson := json.Marshal(data)
 	ClientsJson(json)
 
-	if err != nil {
-		errors.New("Not translate JSON")
+	if errJson != nil {
+		log.Fatal("Not translate JSON")
 	}
 
 }
 
-func ClientsJson(jsondata []byte) (any, error) {
+func ClientsJson(jsondata []byte) {
 	currentDir, errPath := os.Getwd()
 	if errPath != nil {
-		return nil, errors.New("error a la hora de mapear el archivo data")
+		log.Fatal("Error al mapear el archivo raiz")
 	}
 
 	filename := filepath.Join(currentDir, "\\data\\clients.json")
@@ -121,9 +120,26 @@ func ClientsJson(jsondata []byte) (any, error) {
 		os.WriteFile(filename, jsondata, 0666)
 	}
 
-	return nil, nil
 }
 
-func GetDataCLientsJson() {
+func GetDataJsonClients() []Cliente {
+	currentDir, errPath := os.Getwd()
+	if errPath != nil {
+		log.Fatal("Error al mapear el archivo raiz")
+	}
 
+	filename := filepath.Join(currentDir, "\\data\\clients.json")
+
+	if _, err := os.Stat(filename); os.IsNotExist(err) {
+		panic("No esta el archivo para recabar información")
+	} else {
+		data, err := os.ReadFile(filename)
+		if err != nil {
+			log.Fatal("Hubo un error al cargar los datos")
+		}
+		var arrayClients []Cliente
+		json.Unmarshal(data, &arrayClients)
+
+		return arrayClients
+	}
 }
