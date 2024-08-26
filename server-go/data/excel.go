@@ -8,26 +8,23 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"cristianvega6150/server"
 
 	"github.com/xuri/excelize/v2"
 )
 
 // Struct para representar a los clientes
 type Cliente struct {
-	ID               string           `json:"customer_id"`
-	FullName         string           `json:"full_name"`
-	BirthDate        string           `json:"birth_date"`
-	LocationCustomer LocationCustomer `json:"location_customer"`
-	Phone            int              `json:"phone"`
-	Email            string           `json:"email"`
-	DischargeDate    string           `json:"discharge_date"`
-	CustomerGroup    string           `json:"customer_group"`
-}
-
-type LocationCustomer struct {
+	ID                 string `json:"customer_id"`
+	FullName           string `json:"full_name"`
+	BirthDate          string `json:"birth_date"`
 	CustomerAddress    string `json:"customer_address"`
 	CustomerSector     string `json:"customer_sector"`
 	CustomerPostalCode string `json:"customer_costal_code"`
+	Phone              int    `json:"phone"`
+	Email              string `json:"email"`
+	DischargeDate      string `json:"discharge_date"`
+	CustomerGroup      string `json:"customer_group"`
 }
 
 /*
@@ -82,18 +79,16 @@ func GetDataExcel() {
 
 		intphone, _ := strconv.Atoi(row[5])
 		client := Cliente{
-			ID:        row[0],
-			FullName:  row[1],
-			BirthDate: row[2],
-			LocationCustomer: LocationCustomer{
-				CustomerAddress:    row[3],
-				CustomerSector:     sector,
-				CustomerPostalCode: postcode,
-			},
-			Phone:         intphone,
-			Email:         row[6],
-			DischargeDate: row[7],
-			CustomerGroup: row[8],
+			ID:                 row[0],
+			FullName:           row[1],
+			BirthDate:          row[2],
+			CustomerAddress:    row[3],
+			CustomerSector:     sector,
+			CustomerPostalCode: postcode,
+			Phone:              intphone,
+			Email:              row[6],
+			DischargeDate:      row[7],
+			CustomerGroup:      row[8],
 		}
 
 		new_data := append(data, client)
@@ -136,6 +131,7 @@ func GetDataJsonClients() []Cliente {
 		data, err := os.ReadFile(filename)
 		if err != nil {
 			log.Fatal("Hubo un error al cargar los datos")
+			s
 		}
 		var arrayClients []Cliente
 		json.Unmarshal(data, &arrayClients)

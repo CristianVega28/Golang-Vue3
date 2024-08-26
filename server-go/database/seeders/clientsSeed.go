@@ -2,12 +2,27 @@ package seeders
 
 import (
 	excel "cristianvega6150/server/data"
+	"cristianvega6150/server/database"
 	"database/sql"
+	"fmt"
 )
 
 func ClientSeedStart(decode_data []excel.Cliente, connection *sql.DB) {
-	// dataquery, err := connection.Prepare("")
 
-	// var query string = "INSERT INTO VALUES (ID, Fullname, Birthdate, Address, Sector, )"
-	// defer dataquery.Close()
+	var query string = "INSERT INTO clientes VALUES "
+
+	result := database.Helper_insert_data_template(decode_data)
+
+	query += result
+
+	fmt.Println(query)
+	smt, err := connection.Prepare(query)
+
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	// defer smt.Close()
+
+	smt.Exec()
+
 }

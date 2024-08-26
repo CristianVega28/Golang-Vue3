@@ -5,6 +5,8 @@ import (
 	"cristianvega6150/server/controllers/forms"
 	"cristianvega6150/server/core"
 	excel "cristianvega6150/server/data"
+	"cristianvega6150/server/database"
+	"cristianvega6150/server/database/seeders"
 	"net/http"
 )
 
@@ -15,11 +17,19 @@ func main() {
 		},
 		Handler: map[string]func(http.ResponseWriter, *http.Request){
 			"GET /data/{total_index}": data.DataController,
+			"GET /":                   data.MessageController,
 			"POST /form":              forms.FormContrller,
 		},
 	}
 	excel.GetDataExcel()
-	excel.GetDataJsonClients()
+	services := database.ServiceDB{}
+	db, err := services.Conection()
+	if err != nil {
+		panic("error a la conexion de base de datos")
+	}
+	data := excel.GetDataJsonClients()
+	// fmt.Println(data)
+	seeders.ClientSeedStart(data, db)
 	server_core.Start()
 
 }

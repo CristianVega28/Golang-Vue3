@@ -23,6 +23,9 @@ func DataController(w http.ResponseWriter, r *http.Request) {
 	// w.Write(data.GetData(pathvalue))
 }
 
-func DataPostController(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("metodo post")
+func MessageController(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/plain")
+
+	// Envía el mensaje
+	fmt.Fprintf(w, "Este es un mensaje desde el controlador en Go")
 }
