@@ -1,7 +1,7 @@
 CREATE DATABASE vue_golang;
 
 CREATE TABLE clientes (
-    ID int auto_increment primary key  ,
+    ID varchar(10),
     fullname varchar(120),
     birthdate varchar(50),
     address_client varchar(120),

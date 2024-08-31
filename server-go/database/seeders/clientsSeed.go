@@ -1,13 +1,12 @@
 package seeders
 
 import (
-	excel "cristianvega6150/server/data"
 	"cristianvega6150/server/database"
 	"database/sql"
 	"fmt"
 )
 
-func ClientSeedStart(decode_data []excel.Cliente, connection *sql.DB) {
+func ClientSeedStart(decode_data []database.Cliente, connection *sql.DB) {
 
 	var query string = "INSERT INTO clientes VALUES "
 
