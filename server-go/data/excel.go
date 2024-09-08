@@ -21,7 +21,7 @@ Está función es para poder sacar información dentro del excel, con estos dato
 
 func GetDataExcel() {
 
-	var data []database.Cliente
+	var data []database.Clientes
 	currentDir := glob.BASE_PROJECT
 	file, errFileExcel := excelize.OpenFile(filepath.Join(currentDir, "\\data\\clientes.xlsx"))
 	filename := filepath.Join("clients.json")
@@ -63,7 +63,7 @@ func GetDataExcel() {
 		}
 
 		intphone, _ := strconv.Atoi(row[5])
-		client := database.Cliente{
+		client := database.Clientes{
 			ID:                 row[0],
 			FullName:           row[1],
 			BirthDate:          row[2],
@@ -99,7 +99,7 @@ func ClientsJson(jsondata []byte) {
 
 }
 
-func GetDataJsonClients() []database.Cliente {
+func GetDataJsonClients() []database.Clientes {
 
 	currentDir := glob.BASE_PROJECT
 	filename := filepath.Join(currentDir, "\\data\\clients.json")
@@ -112,7 +112,7 @@ func GetDataJsonClients() []database.Cliente {
 		if err != nil {
 			log.Fatal("Hubo un error al cargar los datos")
 		}
-		var arrayClients []database.Cliente
+		var arrayClients []database.Clientes
 		json.Unmarshal(data, &arrayClients)
 
 		return arrayClients

@@ -6,7 +6,7 @@ import (
 	"fmt"
 )
 
-func ClientSeedStart(decode_data []database.Cliente, connection *sql.DB) {
+func ClientSeedStart(decode_data []database.Clientes, connection *sql.DB) {
 
 	var query string = "INSERT INTO clientes VALUES "
 
