@@ -54,8 +54,29 @@ func (ctx *Clientes) GetAllClients() ([]Clientes, error) {
 
 }
 
-func (ctx *Clientes) BetById(id string) {
+func (ctx *Clientes) GetById(id string) Clientes {
+	service := ServiceDB{}
+	db, err := service.Conection()
+	if err != nil {
+		fmt.Println("error en la conexion de base de datos")
+	}
 
+	query := fmt.Sprintf("SELECT * FROM clientes WHERE ID='%s'", id)
+	fmt.Println(query)
+
+	var cliente Clientes
+	row, errRow := db.Query(query)
+
+	for row.Next() {
+		if err := row.Scan(&cliente.ID, &cliente.FullName, &cliente.BirthDate, &cliente.CustomerAddress, &cliente.CustomerSector, &cliente.CustomerPostalCode, &cliente.Phone, &cliente.Email, &cliente.DischargeDate, &cliente.CustomerGroup); err != nil {
+			fmt.Println("error en scan de getByid")
+		}
+	}
+
+	if errRow != nil {
+		fmt.Println("error en obtener el id")
+	}
+	return cliente
 }
 
 func (ctx *Clientes) InsertCliente() {
@@ -102,4 +123,28 @@ func (ctx *Clientes) Pagination(page int, amount int) ([]Clientes, *int, error) 
 
 	defer rows.Close()
 	return clientes, &total_rows, nil
+}
+
+func (ctx *Clientes) DeleteAllClients() (*string, error) {
+	service := ServiceDB{}
+	db, err := service.Conection()
+
+	if err != nil {
+		return nil, errors.New("error en la base de datos")
+	}
+
+	result, errDelete := db.Exec("DELETE FROM clientes")
+	if errDelete != nil {
+		return nil, errors.New(errDelete.Error())
+	}
+
+	rowAffected, errAffected := result.RowsAffected()
+
+	if errAffected != nil {
+		return nil, errors.New(errAffected.Error())
+	}
+
+	message := fmt.Sprintf("Se han eliminado %d filas", rowAffected)
+
+	return &message, nil
 }

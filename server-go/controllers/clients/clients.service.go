@@ -65,3 +65,21 @@ func (ctx *ServiceCliente) paginationService(w http.ResponseWriter, r *http.Requ
 
 	w.Write(responsePagination)
 }
+
+func (ctx *ServiceCliente) getById(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseMultipartForm(32 << 10)
+	if err != nil {
+		http.Error(w, "Error al parsear", http.StatusBadRequest)
+	}
+	idCustomer := r.FormValue("customer_id")
+	fmt.Println(idCustomer)
+	models := database.Clientes{}
+	cliente := models.GetById(idCustomer)
+
+	jsondata, errJson := json.Marshal(cliente)
+	if errJson != nil {
+		fmt.Println("error a la hora de parsear el cliente con id")
+	}
+
+	w.Write(jsondata)
+}
