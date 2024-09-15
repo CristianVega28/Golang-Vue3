@@ -36,6 +36,14 @@ export interface ResultPaginationFetch {
     total_rows: number;
 }
 
+export interface IStatePagination {
+    page: number;
+    pages_total: number;
+    numbers : [] | [number[], (string[] | null), number[]],
+    amount: number,
+    slice_page: number;
+}
+
 export type ObjectDataQuery = Partial<IDataObjectQueries>
    
 export type QueriesUrl = Partial<IQueriesURL>
